@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Classic Photography - Browse Services</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Roboto', sans-serif;
+            background-color: transparent; /* Ensure no fallback color */
+        }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Full-Screen Live Background */
+        .live-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1; /* Behind everything */
+        }
+        .live-background .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            transform: scale(1);
+            transform-origin: center; /* Ensure scaling from center */
+        }
+        .live-background .bg-image.active {
+            opacity: 1;
+            animation: kenburns 12s infinite;
+        }
+        .live-background .bg-image .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6));
+            /* No separate animation, scales with parent */
+        }
+        /* Navbar */
+        .navbar {
+            background: transparent !important; /* Fully transparent */
+            backdrop-filter: none;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #fff !important;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ensure visibility */
+        }
+        .nav-link {
+            color: #fff !important;
+            font-size: 1.8rem; /* Larger icons */
+            padding: 10px 15px;
+            position: relative;
+        }
+        .nav-link i {
+            transition: transform 0.3s;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ensure icon visibility */
+        }
+        .nav-link:hover i {
+            transform: scale(1.2);
+        }
+        /* Tooltip for nav items */
+        .nav-link .tooltip-text {
+            visibility: hidden;
+            background-color: #fff;
+            color: #333;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1000;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .nav-link:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        /* Mobile Navbar */
+        @media (max-width: 991px) {
+            .navbar-nav {
+                background: rgba(0, 0, 0, 0.8); /* Slight background for mobile menu */
+                padding: 15px;
+                border-radius: 10px;
+            }
+            .nav-link {
+                text-align: center;
+                margin: 10px 0;
+            }
+            .nav-link .tooltip-text {
+                bottom: auto;
+                top: 50%;
+                left: 60px;
+                transform: translateY(-50%);
+            }
+        }
+        /* Header Section (Hero Text) */
+        .header-section {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Full viewport height */
+            display: flex; /* Center hero text */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1; /* Above live background */
+        }
+        .header-section .hero-content {
+            position: relative;
+            z-index: 1; /* Above overlay */
+            color: white;
+        }
+        .header-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            animation: fadeInDown 1s ease-in-out;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ensure visibility */
+        }
+        .header-section p {
+            font-size: 1.5rem;
+            animation: fadeInDown 1s ease-in-out 0.2s;
+            animation-fill-mode: both;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ensure visibility */
+        }
+        /* Content Wrapper (to ensure scrolling) */
+        .content-wrapper {
+            position: relative;
+            z-index: 1; /* Above live background */
+            background-color: #f8f9fa; /* Background for content sections */
+        }
+        /* Filter Section */
+        .filter-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .filter-section .form-control, .filter-section .form-select {
+            border-radius: 5px;
+        }
+        /* Service Cards */
+        .service-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .service-card img {
+            height: 200px;
+            object-fit: cover;
+        }
+        .service-card .card-body {
+            padding: 20px;
+        }
+        .service-card .price {
+            color: #28a745;
+            font-weight: 500;
+        }
+        /* Pagination */
+        .pagination .page-link {
+            color: #007bff;
+        }
+        .pagination .page-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        /* Footer */
+        footer {
+            background: #222;
+            color: white;
+            padding: 40px 0;
+        }
+        footer a {
+            color: #ddd;
+            transition: color 0.3s;
+        }
+        footer a:hover {
+            color: #fff;
+        }
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes kenburns {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header-section h1 {
+                font-size: 2.5rem;
+            }
+            .header-section p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Full-Screen Live Background -->
+    <div class="live-background">
+        <div class="bg-image active" style="background-image: url('https://wallpapers.com/images/featured/photographer-jrz8wy1qfbx8j0oo.jpg')">
+            <div class="overlay"></div>
+        </div>
+        <div class="bg-image" style="background-image: url('https://t3.ftcdn.net/jpg/05/33/08/30/360_F_533083025_JrVUUZxlDuO382qXVjOKZ3g7LyNPpE4J.jpg')">
+            <div class="overlay"></div>
+        </div>
+        <div class="bg-image" style="background-image: url('https://images.pexels.com/photos/225157/pexels-photo-225157.jpeg?cs=srgb&dl=pexels-fox-58267-225157.jpg&fm=jpg')">
+            <div class="overlay"></div>
+        </div>
+        <div class="bg-image" style="background-image: url('https://www.shutterstock.com/image-photo/young-editor-works-home-office-260nw-2321499547.jpg')">
+            <div class="overlay"></div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">World Classic</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Home">
+                            <i class="fas fa-home-alt"></i>
+                            <span class="tooltip-text">Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#servicesGrid1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Browse Services">
+                            <i class="fas fa-camera-retro"></i>
+                            <span class="tooltip-text">Browse Services</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.html" data-bs-toggle="tooltip" data-bs-placement="bottom" title="My Profile">
+                            <i class="fas fa-user"></i>
+                            <span class="tooltip-text">My Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Logout">
+                            <i class="fas fa-right-to-bracket"></i>
+                            <span class="tooltip-text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section with Hero Text -->
+    <section class="header-section">
+        <div class="container hero-content">
+            <h1 data-aos="fade-up">Find Your Perfect Photography Service</h1>
+            <p data-aos="fade-up" data-aos-delay="200">Explore top-rated photographers, videographers, and editors.</p>
+        </div>
+    </section>
+
+    <!-- Content Wrapper (for scrolling content) -->
+    <div class="content-wrapper">
+        <!-- Filter Section -->
+        <section class="filter-section container my-5">
+            <h3 class="mb-4">Filter Services</h3>
+            <form id="filterForm" class="row g-3">
+                <div class="col-md-3">
+                    <select class="form-select" id="serviceType">
+                        <option value="">All Services</option>
+                        <option value="photography">Photography</option>
+                        <option value="videography">Videography</option>
+                        <option value="editing">Editing</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" id="location" placeholder="Location">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" id="minPrice" placeholder="Min Price">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" id="maxPrice" placeholder="Max Price">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Services Grid -->
+        <section class="services container" id="servicesGrid1">
+            <h2 class="mb-4" data-aos="fade-up">Available Services</h2>
+            <div class="row" id="servicesGrid">
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card service-card">
+                        <img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" class="card-img-top" alt="Service 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Wedding Photography</h5>
+                            <p class="card-text">Capture your special day with stunning photos.</p>
+                            <p class="price">$500</p>
+                            <p>By: <a href="provider-profile.html">Jane Doe</a></p>
+                            <div class="d-flex justify-content-between">
+                                <span>⭐ 4.8 (120 reviews)</span>
+                                <a href="service-details.html?serviceId=1" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card service-card">
+                        <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80" class="card-img-top" alt="Service 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Video Editing</h5>
+                            <p class="card-text">Professional editing for your videos.</p>
+                            <p class="price">$300</p>
+                            <p>By: <a href="provider-profile.html">John Smith</a></p>
+                            <div class="d-flex justify-content-between">
+                                <span>⭐ 4.9 (95 reviews)</span>
+                                <a href="service-details.html?serviceId=2" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card service-card">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" class="card-img-top" alt="Service 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Portrait Photography</h5>
+                            <p class="card-text">High-quality portraits for any occasion.</p>
+                            <p class="price">$250</p>
+                            <p>By: <a href="provider-profile.html">Emily Brown</a></p>
+                            <div class="d-flex justify-content-between">
+                                <span>⭐ 4.7 (80 reviews)</span>
+                                <a href="service-details.html?serviceId=3" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pagination -->
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>About World Classic</h5>
+                        <p>Your one-stop platform for world-class photography, videography, and editing services.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="admin.html">Admin</a></li>
+                            <li><a href="browse.html">Browse Services</a></li>
+                            <li><a href="login.html">Login/Register</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Follow Us</h5>
+                        <a href="#"><i class="fab fa-facebook fa-2x me-2"></i></a>
+                        <a href="#"><i class="fab fa-instagram fa-2x me-2"></i></a>
+                        <a href="#"><i class="fab fa-twitter fa-2x"></i></a>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <p>© 2025 World Classic Photography. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Custom JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Initialize Bootstrap Tooltips
+        $(document).ready(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                trigger: 'hover',
+                container: 'body'
+            });
+        });
+
+        // Enhanced Live Background Slideshow with Ken Burns Effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.bg-image');
+            let currentIndex = 0;
+            const transitionTime = 12000; // 12 seconds per image
+            const fadeTime = 1500; // 1.5 seconds fade
+
+            function transitionToNextImage() {
+                images[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % images.length;
+                images[currentIndex].classList.add('active');
+                void images[currentIndex].offsetWidth;
+                images[currentIndex].classList.remove('active');
+                setTimeout(() => {
+                    images[currentIndex].classList.add('active');
+                }, 10);
+            }
+
+            setInterval(transitionToNextImage, transitionTime);
+
+            const directions = [
+                'center', 'top', 'bottom', 'left', 'right',
+                'top left', 'top right', 'bottom left', 'bottom right'
+            ];
+            images.forEach((img, index) => {
+                const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+                img.style.backgroundPosition = randomDirection;
+                const animationName = `kenburns-${index}`;
+                const keyframes = `
+                    @keyframes ${animationName} {
+                        0% { transform: scale(1); }
+                        50% { transform: scale(${1 + Math.random() * 0.2}); }
+                        100% { transform: scale(1); }
+                    }
+                `;
+                const style = document.createElement('style');
+                style.innerHTML = keyframes;
+                document.head.appendChild(style);
+                img.style.animation = `${animationName} ${transitionTime/1000}s infinite`;
+            });
+        });
+
+        // Make Live Background Scroll with Page
+        window.addEventListener('scroll', function() {
+            const liveBackground = document.querySelector('.live-background');
+            const scrollPosition = window.scrollY;
+            liveBackground.style.top = -scrollPosition + 'px';
+        });
+
+        // Filter Form Submission
+        $('#filterForm').on('submit', function(e) {
+            e.preventDefault();
+            const serviceType = $('#serviceType').val();
+            const location = $('#location').val();
+            const minPrice = $('#minPrice').val();
+            const maxPrice = $('#maxPrice').val();
+            console.log('Filtering with:', { serviceType, location, minPrice, maxPrice });
+            $('#servicesGrid').html(`
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card service-card">
+                        <img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" class="card-img-top" alt="Service 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Filtered Wedding Photography</h5>
+                            <p class="card-text">Capture your special day with stunning photos.</p>
+                            <p class="price">$500</p>
+                            <p>By: <a href="provider-profile.html">Jane Doe</a></p>
+                            <div class="d-flex justify-content-between">
+                                <span>⭐ 4.8 (120 reviews)</span>
+                                <a href="service-details.html?serviceId=1" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        });
+    </script>
+</body>
+</html>

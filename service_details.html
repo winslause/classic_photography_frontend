@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Classic Photography - Service Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Header */
+        .service-header {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://wallpapersok.com/images/hd/blurred-lights-dslr-camera-photography-z1z5nn4asvlk8cok.jpg') no-repeat center center/cover;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        /* Cards */
+        .service-card, .provider-card, .request-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .service-card:hover, .provider-card:hover, .request-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        .service-card img {
+            height: 200px;
+            object-fit: cover;
+        }
+        /* Portfolio Carousel */
+        .carousel-item img {
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        /* Request Form */
+        .form-check-input:checked {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .total-cost {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #28a745;
+        }
+        /* Modals */
+        .modal-content {
+            border-radius: 10px;
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .carousel-item img {
+                height: 250px;
+            }
+            .service-header {
+                padding: 50px 0;
+            }
+        }
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">World Classic</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="browse.html">Browse Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my-profile.html">My Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Service Header -->
+    <section class="service-header">
+        <div class="container">
+            <h1 data-aos="fade-up">Wedding Photography</h1>
+            <p data-aos="fade-up" data-aos-delay="200">Capture your special day with stunning photos</p>
+            <p data-aos="fade-up" data-aos-delay="400" class="text-success">Price: $500</p>
+        </div>
+    </section>
+
+    <!-- Service Details Section -->
+    <section class="container my-5">
+        <div class="row">
+            <!-- Service Information -->
+            <div class="col-lg-8">
+                <div class="card service-card mb-4" data-aos="fade-up">
+                    <div class="card-body">
+                        <h3>Service Details</h3>
+                        <p><strong>Type:</strong> Photography</p>
+                        <p><strong>Location:</strong> New York, NY</p>
+                        <p><strong>Skills:</strong> Photoshop, Lightroom</p>
+                        <p><strong>Description:</strong> Capture your special day with stunning photos, tailored to your vision. Includes full-day coverage, editing, and high-resolution images.</p>
+                    </div>
+                </div>
+
+                <!-- Portfolio Carousel -->
+                <div class="card service-card mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-body">
+                        <h3>Portfolio</h3>
+                        <div id="portfolioCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="https://wallpapers.com/images/featured/camera-95u5meqmzcsp76z9.jpg" class="d-block w-100" alt="Portfolio Image 1">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="https://t3.ftcdn.net/jpg/00/59/23/18/360_F_59231879_UkuKbgsxsjoJnQqFxQUuFPUMnYbDskOD.jpg" class="d-block w-100" alt="Portfolio Image 2">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#portfolioCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#portfolioCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Provider Information and Request Form -->
+            <div class="col-lg-4">
+                <!-- Provider Details -->
+                <div class="card provider-card mb-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="card-body text-center">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Provider Photo" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                        <h4>John David</h4>
+                        <p><strong>Location:</strong> New York, NY</p>
+                        <p><strong>Rating:</strong> ⭐ 4.8 (120 reviews)</p>
+                        <p><strong>Bio:</strong> Passionate photographer with 10 years of experience in weddings and portraits.</p>
+                        <p><strong>Skills:</strong> Photoshop, Lightroom, Final Cut Pro</p>
+                        <a href="provider-profile.html" class="btn btn-outline-primary">View Full Profile</a>
+                    </div>
+                </div>
+
+                <!-- Request Service Form -->
+                <div class="card request-card" data-aos="fade-up" data-aos-delay="600">
+                    <div class="card-body">
+                        <h4>Request This Service</h4>
+                        <form id="requestServiceForm">
+                            <div class="mb-3">
+                                <label for="customerName" class="form-label">Your Name</label>
+                                <input type="text" class="form-control" id="customerName" placeholder="e.g., Sarah M." required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="customerPhone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="customerPhone" placeholder="e.g., +1 123-456-7890" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="customerLocation" class="form-label">Your Location</label>
+                                <input type="text" class="form-control" id="customerLocation" placeholder="e.g., Brooklyn, NY" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Delivery Method</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="deliveryMethod" id="doorDelivery" value="door" checked>
+                                    <label class="form-check-label" for="doorDelivery">
+                                        Door Delivery (+$50)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="deliveryMethod" id="pickUp" value="pickup">
+                                    <label class="form-check-label" for="pickUp">
+                                        Pick Up from Shop (Free)
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <p class="total-cost">Total Cost: <span id="totalCost">$550</span></p>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-paper-plane me-2"></i> Request Service
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About World Classic</h5>
+                    <p>Your one-stop platform for world-class photography, videography, and editing services.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white">Home</a></li>
+                        <li><a href="browse.html" class="text-white">Browse Services</a></li>
+                        <li><a href="my-profile.html" class="text-white">My Profile</a></li>
+                        <li><a href="#" class="text-white">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Follow Us</h5>
+                    <a href="#" class="text-white"><i class="fab fa-facebook fa-2x me-2"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram fa-2x me-2"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <p>© 2025 World Classic Photography. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+    <!-- Custom JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Dynamic Total Cost Calculation
+        const basePrice = 500; // Base service price
+        const deliveryCost = 50; // Additional cost for door delivery
+        function updateTotalCost() {
+            const deliveryMethod = $('input[name="deliveryMethod"]:checked').val();
+            const total = deliveryMethod === 'door' ? basePrice + deliveryCost : basePrice;
+            $('#totalCost').text(`$${total}`);
+        }
+
+        // Update total cost on delivery method change
+        $('input[name="deliveryMethod"]').change(updateTotalCost);
+
+        // Handle Request Service Form Submission (Mock)
+        $('#requestServiceForm').submit(function(e) {
+            e.preventDefault();
+            const formData = {
+                customerName: $('#customerName').val(),
+                customerPhone: $('#customerPhone').val(),
+                customerLocation: $('#customerLocation').val(),
+                deliveryMethod: $('input[name="deliveryMethod"]:checked').val(),
+                totalCost: $('#totalCost').text()
+            };
+            console.log('Service Request:', formData);
+            alert('Service requested successfully!'); // Replace with actual API call
+            $('#requestServiceForm')[0].reset();
+            updateTotalCost(); // Reset total cost
+        });
+    </script>
+</body>
+</html>

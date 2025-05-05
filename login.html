@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Classic Photography - Login/Register</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Roboto', sans-serif;
+            background-color: transparent; /* Ensure no fallback color */
+        }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Full-Screen Live Background */
+        .live-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1; /* Behind everything */
+        }
+        .live-background .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            transform: scale(1);
+            transform-origin: center; /* Ensure scaling from center */
+        }
+        .live-background .bg-image.active {
+            opacity: 1;
+            animation: kenburns 12s infinite;
+        }
+        .live-background .bg-image .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6));
+            /* No separate animation, scales with parent */
+        }
+        /* Navbar */
+        .navbar {
+            background: transparent !important; /* Fully transparent */
+            backdrop-filter: none;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #fff !important;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ensure visibility */
+        }
+        .nav-link {
+            color: #fff !important;
+            font-size: 1.8rem; /* Larger icons */
+            padding: 10px 15px;
+            position: relative;
+        }
+        .nav-link i {
+            transition: transform 0.3s;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ensure icon visibility */
+        }
+        .nav-link:hover i {
+            transform: scale(1.2);
+        }
+        /* Tooltip for nav items */
+        .nav-link .tooltip-text {
+            visibility: hidden;
+            background-color: #fff;
+            color: #333;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1000;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .nav-link:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        /* Mobile Navbar */
+        @media (max-width: 991px) {
+            .navbar-nav {
+                background: rgba(0, 0, 0, 0.8); /* Slight background for mobile menu */
+                padding: 15px;
+                border-radius: 10px;
+            }
+            .nav-link {
+                text-align: center;
+                margin: 10px 0;
+            }
+            .nav-link .tooltip-text {
+                bottom: auto;
+                top: 50%;
+                left: 60px;
+                transform: translateY(-50%);
+            }
+        }
+        /* Header Section (Hero Text) */
+        .header-section {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Full viewport height */
+            display: flex; /* Center hero text */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1; /* Above live background */
+        }
+        .header-section .hero-content {
+            position: relative;
+            z-index: 1; /* Above overlay */
+            color: white;
+        }
+        .header-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            animation: fadeInDown 1s ease-in-out;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ensure visibility */
+        }
+        .header-section p {
+            font-size: 1.5rem;
+            animation: fadeInDown 1s ease-in-out 0.2s;
+            animation-fill-mode: both;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Ensure visibility */
+        }
+        /* Content Wrapper (to ensure scrolling) */
+        .content-wrapper {
+            position: relative;
+            z-index: 1; /* Above live background */
+            background-color: #f8f9fa; /* Background for content sections */
+        }
+        /* Modals */
+        .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .modal-header {
+            border-bottom: none;
+        }
+        .modal-body {
+            padding: 30px;
+        }
+        .google-btn {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .google-btn img {
+            width: 20px;
+            margin-right: 10px;
+        }
+        .google-btn:hover {
+            background-color: #f8f9fa;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ccc;
+        }
+        .divider::before {
+            margin-right: 10px;
+        }
+        .divider::after {
+            margin-left: 10px;
+        }
+        /* Form Validation Styles */
+        .form-control.is-valid {
+            border-color: #28a745;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+        .invalid-feedback,
+        .valid-feedback {
+            font-size: 0.875rem;
+        }
+        /* Footer */
+        footer {
+            background: #222;
+            color: white;
+            padding: 40px 0;
+        }
+        footer a {
+            color: #ddd;
+            transition: color 0.3s;
+        }
+        footer a:hover {
+            color: #fff;
+        }
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes kenburns {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header-section h1 {
+                font-size: 2.5rem;
+            }
+            .header-section p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Full-Screen Live Background -->
+    <div class="live-background">
+        <div class="bg-image active" style="background-image: url('https://wallpapers.com/images/featured/photographer-jrz8wy1qfbx8j0oo.jpg')">
+            <div class="overlay"></div>
+        </div>
+        <div class="bg-image" style="background-image: url('https://t3.ftcdn.net/jpg/05/33/08/30/360_F_533083025_JrVUUZxlDuO382qXVjOKZ3g7LyNPpE4J.jpg')">
+            <div class="overlay"></div>
+        </div>
+        <div class="bg-image" style="background-image: url('https://images.pexels.com/photos/225157/pexels-photo-225157.jpeg?cs=srgb&dl=pexels-fox-58267-225157.jpg&fm=jpg')">
+            <div class="overlay"></div>
+        </div>
+        <div class="bg-image" style="background-image: url('https://www.shutterstock.com/image-photo/young-editor-works-home-office-260nw-2321499547.jpg')">
+            <div class="overlay"></div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">World Classic</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Home">
+                            <i class="fas fa-home-alt"></i>
+                            <span class="tooltip-text">Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="browse.html" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Browse Services">
+                            <i class="fas fa-camera-retro"></i>
+                            <span class="tooltip-text">Browse Services</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my-profile.html" data-bs-toggle="tooltip" data-bs-placement="bottom" title="My Profile">
+                            <i class="fas fa-user"></i>
+                            <span class="tooltip-text">My Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="login.html" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Login/Register">
+                            <i class="fas fa-right-to-bracket"></i>
+                            <span class="tooltip-text">Login/Register</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section with Hero Text -->
+    <section class="header-section">
+        <div class="container hero-content">
+            <h1 data-aos="fade-up">Welcome Back</h1>
+            <p data-aos="fade-up" data-aos-delay="200">Login, Register, or Reset Your Password</p>
+        </div>
+    </section>
+
+    <!-- Content Wrapper (for scrolling content) -->
+    <div class="content-wrapper">
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>About World Classic</h5>
+                        <p>Your one-stop platform for world-class photography, videography, and editing services.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="browse.html">Browse Services</a></li>
+                            <li><a href="my-profile.html">My Profile</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Follow Us</h5>
+                        <a href="#"><i class="fab fa-facebook fa-2x me-2"></i></a>
+                        <a href="#"><i class="fab fa-instagram fa-2x me-2"></i></a>
+                        <a href="#"><i class="fab fa-twitter fa-2x"></i></a>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <p>© 2025 World Classic Photography. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <button id="googleLoginBtn" class="google-btn w-100 mb-3">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Icon">
+                        Sign in with Google
+                    </button>
+                    <div class="divider">OR</div>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required>
+                            <div id="loginEmailFeedback" class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                            <div id="loginPasswordFeedback" class="invalid-feedback"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                    <p class="mt-3 text-center">
+                        Don't have an account? 
+                        <a href="#" id="switchToRegister">Register here</a>
+                    </p>
+                    <p class="text-center">
+                        Forgot your password? 
+                        <a href="#" id="switchToResetPassword">Reset here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerModalLabel">Register</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <button id="googleRegisterBtn" class="google-btn w-100 mb-3">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Icon">
+                        Sign up with Google
+                    </button>
+                    <div class="divider">OR</div>
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="registerEmail" placeholder="Enter your email" required>
+                            <div id="registerEmailFeedback" class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="registerPassword" placeholder="Create a password" required>
+                            <div id="registerPasswordFeedback" class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+                            <div id="confirmPasswordFeedback" class="invalid-feedback"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+                    <p class="mt-3 text-center">
+                        Already have an account? 
+                        <a href="#" id="switchToLoginFromRegister">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetPasswordModalLabel">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Enter your email address, and we'll send you a link to reset your password.</p>
+                    <form id="resetPasswordForm">
+                        <div class="mb-3">
+                            <label for="resetEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="resetEmail" placeholder="Enter your email" required>
+                            <div id="resetEmailFeedback" class="invalid-feedback"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
+                    </form>
+                    <p class="mt-3 text-center">
+                        Back to 
+                        <a href="#" id="switchToLoginFromReset">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+    <!-- Custom JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Initialize Bootstrap Tooltips
+        $(document).ready(function() {
+            // Ensure tooltips are initialized
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                trigger: 'hover',
+                container: 'body'
+            });
+
+            // Show Login Modal on Page Load
+            $('#loginModal').modal('show');
+
+            // Debug: Log to confirm jQuery is working
+            console.log('jQuery is loaded and document is ready');
+
+            // Modal Switching Event Listeners
+            $('#switchToRegister').on('click', function(e) {
+                e.preventDefault();
+                console.log('Switch to Register clicked');
+                $('#loginModal').modal('hide');
+                setTimeout(function() {
+                    $('#registerModal').modal('show');
+                }, 300); // Small delay to ensure smooth transition
+            });
+
+            $('#switchToLoginFromRegister').on('click', function(e) {
+                e.preventDefault();
+                console.log('Switch to Login from Register clicked');
+                $('#registerModal').modal('hide');
+                setTimeout(function() {
+                    $('#loginModal').modal('show');
+                }, 300);
+            });
+
+            $('#switchToResetPassword').on('click', function(e) {
+                e.preventDefault();
+                console.log('Switch to Reset Password clicked');
+                $('#loginModal').modal('hide');
+                setTimeout(function() {
+                    $('#resetPasswordModal').modal('show');
+                }, 300);
+            });
+
+            $('#switchToLoginFromReset').on('click', function(e) {
+                e.preventDefault();
+                console.log('Switch to Login from Reset clicked');
+                $('#resetPasswordModal').modal('hide');
+                setTimeout(function() {
+                    $('#loginModal').modal('show');
+                }, 300);
+            });
+        });
+
+        // Enhanced Live Background Slideshow with Ken Burns Effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.bg-image');
+            let currentIndex = 0;
+            const transitionTime = 12000; // 12 seconds per image
+            const fadeTime = 1500; // 1.5 seconds fade
+
+            function transitionToNextImage() {
+                images[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % images.length;
+                images[currentIndex].classList.add('active');
+                void images[currentIndex].offsetWidth;
+                images[currentIndex].classList.remove('active');
+                setTimeout(() => {
+                    images[currentIndex].classList.add('active');
+                }, 10);
+            }
+
+            setInterval(transitionToNextImage, transitionTime);
+
+            const directions = [
+                'center', 'top', 'bottom', 'left', 'right',
+                'top left', 'top right', 'bottom left', 'bottom right'
+            ];
+            images.forEach((img, index) => {
+                const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+                img.style.backgroundPosition = randomDirection;
+                const animationName = `kenburns-${index}`;
+                const keyframes = `
+                    @keyframes ${animationName} {
+                        0% { transform: scale(1); }
+                        50% { transform: scale(${1 + Math.random() * 0.2}); }
+                        100% { transform: scale(1); }
+                    }
+                `;
+                const style = document.createElement('style');
+                style.innerHTML = keyframes;
+                document.head.appendChild(style);
+                img.style.animation = `${animationName} ${transitionTime/1000}s infinite`;
+            });
+        });
+
+        // Make Live Background Scroll with Page
+        window.addEventListener('scroll', function() {
+            const liveBackground = document.querySelector('.live-background');
+            const scrollPosition = window.scrollY;
+            liveBackground.style.top = -scrollPosition + 'px';
+        });
+
+        // Firebase Configuration (Replace with your actual Firebase config)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        // Google Login/Register
+        function googleAuth() {
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log('Google Auth Success:', user);
+                    window.location.href = 'my-profile.html';
+                })
+                .catch((error) => {
+                    console.error('Google Auth Error:', error);
+                    alert(error.message);
+                });
+        }
+
+        document.getElementById('googleLoginBtn').addEventListener('click', googleAuth);
+        document.getElementById('googleRegisterBtn').addEventListener('click', googleAuth);
+
+        // Live Validation for Login Form
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const loginEmailFeedback = document.getElementById('loginEmailFeedback');
+        const loginPasswordFeedback = document.getElementById('loginPasswordFeedback');
+
+        loginEmail.addEventListener('input', function() {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(loginEmail.value)) {
+                loginEmail.classList.remove('is-valid');
+                loginEmail.classList.add('is-invalid');
+                loginEmailFeedback.classList.remove('valid-feedback');
+                loginEmailFeedback.classList.add('invalid-feedback');
+                loginEmailFeedback.textContent = 'Please enter a valid email address.';
+            } else {
+                loginEmail.classList.remove('is-invalid');
+                loginEmail.classList.add('is-valid');
+                loginEmailFeedback.classList.remove('invalid-feedback');
+                loginEmailFeedback.classList.add('valid-feedback');
+                loginEmailFeedback.textContent = 'Looks good!';
+            }
+        });
+
+        loginPassword.addEventListener('input', function() {
+            if (loginPassword.value.length === 0) {
+                loginPassword.classList.remove('is-valid');
+                loginPassword.classList.add('is-invalid');
+                loginPasswordFeedback.classList.remove('valid-feedback');
+                loginPasswordFeedback.classList.add('invalid-feedback');
+                loginPasswordFeedback.textContent = 'Password is required.';
+            } else {
+                loginPassword.classList.remove('is-invalid');
+                loginPassword.classList.add('is-valid');
+                loginPasswordFeedback.classList.remove('invalid-feedback');
+                loginPasswordFeedback.classList.add('valid-feedback');
+                loginPasswordFeedback.textContent = 'Looks good!';
+            }
+        });
+
+        // Live Validation for Register Form
+        const registerEmail = document.getElementById('registerEmail');
+        const registerPassword = document.getElementById('registerPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const registerEmailFeedback = document.getElementById('registerEmailFeedback');
+        const registerPasswordFeedback = document.getElementById('registerPasswordFeedback');
+        const confirmPasswordFeedback = document.getElementById('confirmPasswordFeedback');
+
+        registerEmail.addEventListener('input', function() {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(registerEmail.value)) {
+                registerEmail.classList.remove('is-valid');
+                registerEmail.classList.add('is-invalid');
+                registerEmailFeedback.classList.remove('valid-feedback');
+                registerEmailFeedback.classList.add('invalid-feedback');
+                registerEmailFeedback.textContent = 'Please enter a valid email address.';
+            } else {
+                registerEmail.classList.remove('is-invalid');
+                registerEmail.classList.add('is-valid');
+                registerEmailFeedback.classList.remove('invalid-feedback');
+                registerEmailFeedback.classList.add('valid-feedback');
+                registerEmailFeedback.textContent = 'Looks good!';
+            }
+        });
+
+        registerPassword.addEventListener('input', function() {
+            const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+            if (!passwordPattern.test(registerPassword.value)) {
+                registerPassword.classList.remove('is-valid');
+                registerPassword.classList.add('is-invalid');
+                registerPasswordFeedback.classList.remove('valid-feedback');
+                registerPasswordFeedback.classList.add('invalid-feedback');
+                registerPasswordFeedback.textContent = 'Password must be at least 8 characters, with 1 uppercase letter, 1 number, and 1 special character.';
+            } else {
+                registerPassword.classList.remove('is-invalid');
+                registerPassword.classList.add('is-valid');
+                registerPasswordFeedback.classList.remove('invalid-feedback');
+                registerPasswordFeedback.classList.add('valid-feedback');
+                registerPasswordFeedback.textContent = 'Looks good!';
+            }
+            // Re-validate confirm password when password changes
+            if (confirmPassword.value.length > 0) {
+                if (confirmPassword.value !== registerPassword.value) {
+                    confirmPassword.classList.remove('is-valid');
+                    confirmPassword.classList.add('is-invalid');
+                    confirmPasswordFeedback.classList.remove('valid-feedback');
+                    confirmPasswordFeedback.classList.add('invalid-feedback');
+                    confirmPasswordFeedback.textContent = 'Passwords do not match.';
+                } else {
+                    confirmPassword.classList.remove('is-invalid');
+                    confirmPassword.classList.add('is-valid');
+                    confirmPasswordFeedback.classList.remove('invalid-feedback');
+                    confirmPasswordFeedback.classList.add('valid-feedback');
+                    confirmPasswordFeedback.textContent = 'Passwords match!';
+                }
+            }
+        });
+
+        confirmPassword.addEventListener('input', function() {
+            if (confirmPassword.value !== registerPassword.value) {
+                confirmPassword.classList.remove('is-valid');
+                confirmPassword.classList.add('is-invalid');
+                confirmPasswordFeedback.classList.remove('valid-feedback');
+                confirmPasswordFeedback.classList.add('invalid-feedback');
+                confirmPasswordFeedback.textContent = 'Passwords do not match.';
+            } else {
+                confirmPassword.classList.remove('is-invalid');
+                confirmPassword.classList.add('is-valid');
+                confirmPasswordFeedback.classList.remove('invalid-feedback');
+                confirmPasswordFeedback.classList.add('valid-feedback');
+                confirmPasswordFeedback.textContent = 'Passwords match!';
+            }
+        });
+
+        // Live Validation for Reset Password Form
+        const resetEmail = document.getElementById('resetEmail');
+        const resetEmailFeedback = document.getElementById('resetEmailFeedback');
+
+        resetEmail.addEventListener('input', function() {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(resetEmail.value)) {
+                resetEmail.classList.remove('is-valid');
+                resetEmail.classList.add('is-invalid');
+                resetEmailFeedback.classList.remove('valid-feedback');
+                resetEmailFeedback.classList.add('invalid-feedback');
+                resetEmailFeedback.textContent = 'Please enter a valid email address.';
+            } else {
+                resetEmail.classList.remove('is-invalid');
+                resetEmail.classList.add('is-valid');
+                resetEmailFeedback.classList.remove('invalid-feedback');
+                resetEmailFeedback.classList.add('valid-feedback');
+                resetEmailFeedback.textContent = 'Looks good!';
+            }
+        });
+
+        // Login Form Submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = loginEmail.value;
+            const password = loginPassword.value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log('Login Success:', user);
+                    window.location.href = 'my-profile.html';
+                })
+                .catch((error) => {
+                    console.error('Login Error:', error);
+                    alert(error.message);
+                });
+        });
+
+        // Register Form Submission
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = registerEmail.value;
+            const password = registerPassword.value;
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log('Registration Success:', user);
+                    window.location.href = 'my-profile.html';
+                })
+                .catch((error) => {
+                    console.error('Registration Error:', error);
+                    alert(error.message);
+                });
+        });
+
+        // Reset Password Form Submission
+        document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = resetEmail.value;
+
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    console.log('Password Reset Email Sent to:', email);
+                    alert('Password reset email sent! Please check your inbox.');
+                    $('#resetPasswordModal').modal('hide');
+                    $('#loginModal').modal('show');
+                })
+                .catch((error) => {
+                    console.error('Password Reset Error:', error);
+                    alert(error.message);
+                });
+        });
+    </script>
+</body>
+</html>
